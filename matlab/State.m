@@ -4,6 +4,7 @@ properties
     stateName;
     stateLevel;
     images;
+    imgVec;
     subspace;
 end
 
@@ -12,7 +13,7 @@ methods
         stateObj.stateName = stateName;
         stateObj.stateLevel = stateLevel;
         stateObj.images = images;
-        stateObj.subspace = stateObj.generateSubspace(stateObj.images,subspaceDimension);
+        [stateObj.subspace, stateObj.imgVec] = stateObj.generateSubspace(stateObj.images,subspaceDimension);
     end
     
     function showImgHorizontal(obj,maxPhoto)
@@ -27,6 +28,10 @@ methods
         figure;
         imshow(alignedImg,[]);
     end
+    
+    function subspace = getSubspace(obj)
+        subspace = obj.subspace;
+    end
 end
 methods(Static)  
     function imgVec = images2vectors(images)
@@ -35,13 +40,12 @@ methods(Static)
         for i = 1:length(images)
             imgVec(:,i) = images{i}(:);
         end
-        imgVec=normc(imgVec);
     end
     
-    function P=generateSubspace(images,dimension)
+    function [P,imgVec]=generateSubspace(images,dimension)
         imgVec = State.images2vectors(images);
-        P = pca(imgVec);
-        %P = P(:,1:dimension);
+        P = pca(imgVec');
+        P = P(:,1:dimension);
     end
     
 end

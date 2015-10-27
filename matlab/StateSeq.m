@@ -3,6 +3,7 @@ classdef StateSeq < handle
 properties 
     states;
     stateName;
+    numStates;
 end
 
 methods
@@ -15,11 +16,21 @@ methods
     function stateSeqObj = StateSeq(stateName, images, idx, numStates, subspaceDimension)
         stateSeqObj.stateName = stateName;
         stateSeqObj.states = cell(1,numStates);
+        stateSeqObj.numStates = numStates;
         sampledIdx = stateSeqObj.sampleImageSeq(idx,numStates);
         for i=1:numStates
             stateSeqObj.states{i} = State(images(sampledIdx(:,i)), stateName, i, subspaceDimension);
         end
     end
+    
+    %function d = computeDistances(obj)
+     %   d = zeros(obj.numStates);
+      %  for i = 1:obj.numStates
+       %     for j=(i+1):obj.numStates
+        %        d(i,j)=geodesicDist(P{i},P{j});
+         %   end
+        %end
+    %end
 end
 
 
@@ -34,7 +45,8 @@ methods(Static)
         sampledIdx((i-1)*numPoints+(1:numPoints))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numPoints-2)/(numPoints-1))), maxIdx]';
     end
     sampledIdx = reshape(sampledIdx,numPoints,length(sampledIdx)/numPoints)';
-end
+    end
+
 end
 
 end
