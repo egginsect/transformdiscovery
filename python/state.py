@@ -1,3 +1,4 @@
 class State(object):
-def __init__(self, stateType):
-    self.stateType = stateType;
+def __init__(self, stateName, stateLevel):
+    self.stateName = stateName;
+    self.stateLevel = stateLevel;	
