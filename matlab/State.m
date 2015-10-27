@@ -14,14 +14,21 @@ methods
         stateObj.images = images;
         stateObj.subspace = stateObj.generateSubspace(stateObj.images,subspaceDimension);
     end
-end
-methods(Static)
-    function P=generateSubspace(images,dimension)
-        imgVec = images2vectors(images);
-        P = pca(imgVec);
-        P = P(:,1:dimension);
-    end
     
+    function showImgHorizontal(obj,maxPhoto)
+        if maxPhoto>length(obj.images)
+           maxPhoto = length(obj.images)
+        end
+        [colDim, rowDim] = size(obj.images{1});
+        alignedImg = zeros(colDim,rowDim*maxPhoto);
+        for i=1:maxPhoto
+            alignedImg(:,(i-1)*rowDim+1:i*rowDim) = obj.images{i};
+        end
+        figure;
+        imshow(alignedImg,[]);
+    end
+end
+methods(Static)  
     function imgVec = images2vectors(images)
         %image is a 1-by-n vector
         imgVec = zeros(prod(size(images{1})),length(images));
@@ -31,15 +38,12 @@ methods(Static)
         imgVec=normc(imgVec);
     end
     
-    function showImgHorizontal()
-        [colDim, rowDim] = size(self.images{1});
-        alignedImg = zeros(colDim,rowDim*length(self.images));
-        for i=1:length(self.images)
-            alignedImg(:,(i-1)*rowDim+1:i*rowDim) = self.images{i};
-        end
-        figure;
-        imshow(alignedImg,[]);
+    function P=generateSubspace(images,dimension)
+        imgVec = State.images2vectors(images);
+        P = pca(imgVec);
+        %P = P(:,1:dimension);
     end
+    
 end
 
 end

@@ -1,8 +1,8 @@
 classdef StateSeq < handle
 
 properties 
-    States;
-    StateName;
+    states;
+    stateName;
 end
 
 methods
@@ -12,12 +12,12 @@ methods
 %       sequence an image belongs to
 %numStates: specifies how many states to be generate from these image
 %subspaceDimension: indicating the dimension of subspace representing each state
-    function StateSeqObj = StateSeq(StateName, images, idx, numStates, subspaceDimension)
-        StateSeqObj.StateName = StateName;
-        StateSeqObj.States = cell{1,numStates};
-        sampledIdx = self.sampleImageSeq(idx,numStates);
+    function stateSeqObj = StateSeq(stateName, images, idx, numStates, subspaceDimension)
+        stateSeqObj.stateName = stateName;
+        stateSeqObj.states = cell(1,numStates);
+        sampledIdx = stateSeqObj.sampleImageSeq(idx,numStates);
         for i=1:numStates
-            StateSeqObj.States{i} = State(images(sampledIdx(:,i)), stateName, i, subspaceDimension)
+            stateSeqObj.states{i} = State(images(sampledIdx(:,i)), stateName, i, subspaceDimension);
         end
     end
 end
@@ -33,6 +33,7 @@ methods(Static)
         maxIdx = max(croppedIdx);
         sampledIdx((i-1)*numPoints+(1:numPoints))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numPoints-2)/(numPoints-1))), maxIdx]';
     end
+    sampledIdx = reshape(sampledIdx,numPoints,length(sampledIdx)/numPoints)';
 end
 end
 
