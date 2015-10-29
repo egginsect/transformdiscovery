@@ -18,19 +18,31 @@ methods
         stateSeqObj.states = cell(1,numStates);
         stateSeqObj.numStates = numStates;
         sampledIdx = stateSeqObj.sampleImageSeq(idx,numStates);
+        
         for i=1:numStates
+            %[num2str(i),' th state']
+            sampledIdx(:,i)
             stateSeqObj.states{i} = State(images(sampledIdx(:,i)), stateName, i, subspaceDimension);
         end
     end
     
-    %function d = computeDistances(obj)
-     %   d = zeros(obj.numStates);
-      %  for i = 1:obj.numStates
-       %     for j=(i+1):obj.numStates
-        %        d(i,j)=geodesicDist(P{i},P{j});
-         %   end
-        %end
-    %end
+    function d = computeDistances(obj)
+        d = zeros(obj.numStates);
+        for i = 1:obj.numStates
+            for j=(i+1):obj.numStates
+                d(i,j)=stateDist(obj.states{i},obj.states{j});
+            end
+        end
+    end
+    
+    % Return ith-state
+    function state = getState(obj,i)
+        if(~any(i==1:obj.numStates))
+            error(['Invalid State Number for State ',obj.stateName]);
+        else
+            state = obj.states{i};
+        end
+    end
 end
 
 

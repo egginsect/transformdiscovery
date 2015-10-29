@@ -23,6 +23,8 @@ methods
         [colDim, rowDim] = size(obj.images{1});
         alignedImg = zeros(colDim,rowDim*maxPhoto);
         for i=1:maxPhoto
+            size(alignedImg(:,(i-1)*rowDim+1:i*rowDim))
+            size(obj.images{i})
             alignedImg(:,(i-1)*rowDim+1:i*rowDim) = obj.images{i};
         end
         figure;
@@ -38,6 +40,9 @@ methods(Static)
         %image is a 1-by-n vector
         imgVec = zeros(prod(size(images{1})),length(images));
         for i = 1:length(images)
+            %[num2str(i),' th image']
+            %size(imgVec(:,i))
+            %size(images{i}(:))
             imgVec(:,i) = images{i}(:);
         end
     end
@@ -45,6 +50,7 @@ methods(Static)
     function [P,imgVec]=generateSubspace(images,dimension)
         imgVec = State.images2vectors(images);
         P = pca(imgVec');
+        %size(P)
         P = P(:,1:dimension);
     end
     
