@@ -9,8 +9,8 @@ end
 methods
 %State Sequence Class Constructor
 %images: assume a cell array, each element is a gray image
-%idx: there are multiple sequence of state transform, idx indicating which
-%       sequence an image belongs to
+%idx: there are multiple sequence, each sequence represents state transform for one person, 
+%       idx indicating which sequence an image belongs to
 %numStates: specifies how many states to be generate from these image
 %subspaceDimension: indicating the dimension of subspace representing each state
     function stateSeqObj = StateSeq(stateName, images, idx, numStates, subspaceDimension)
@@ -21,7 +21,7 @@ methods
         
         for i=1:numStates
             %[num2str(i),' th state']
-            sampledIdx(:,i)
+            %sampledIdx(:,i)
             stateSeqObj.states{i} = State(images(sampledIdx(:,i)), stateName, i, subspaceDimension);
         end
     end
