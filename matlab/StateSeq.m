@@ -17,7 +17,7 @@ methods
         stateSeqObj.stateName = stateName;
         stateSeqObj.states = cell(1,numStates);
         stateSeqObj.numStates = numStates;
-        sampledIdx = stateSeqObj.sampleImageSeq(idx,numStates);
+        sampledIdx = stateSeqObj.sampleImageSeq(idx, numStates, subspaceDimension+1);
         
         for i=1:numStates
             %[num2str(i),' th state']
@@ -43,22 +43,26 @@ methods
             state = obj.states{i};
         end
     end
+    
+
 end
 
 
 methods(Static)
-    function sampledIdx = sampleImageSeq(idx,numPoints)
-    sampledIdx = zeros(length(unique(idx))*numPoints,1);
+    function sampledIdx = sampleImageSeq(idx, numStates, numPerson)
+    sampledIdx = zeros(length(unique(idx))*numStates,1);
     objectLabel = unique(idx);
     for i=1:length(objectLabel)
         croppedIdx = find(idx==objectLabel(i));
         minIdx = min(croppedIdx);
         maxIdx = max(croppedIdx);
-        sampledIdx((i-1)*numPoints+(1:numPoints))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numPoints-2)/(numPoints-1))), maxIdx]';
+        sampledIdx((i-1)*numStates+(1:numStates))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numStates-2)/(numStates-1))), maxIdx]';
     end
-    sampledIdx = reshape(sampledIdx,numPoints,length(sampledIdx)/numPoints)';
+    sampledIdx = reshape(sampledIdx,numStates,length(sampledIdx)/numStates)';
+    p = randperm(size(sampledIdx,1));
+    sampledIdx = sampledIdx(p(1:numPerson),:);
     end
-
+    
 end
 
 end
