@@ -36,21 +36,24 @@ methods
         end
     end
     
-    %function genNodes4graph(obj)
-       % obj.nodeNames = cell(0);
-        %k = keys(obj.states);
-        %for i=1:length(k)
-         %   for j=1:obj.states(k{i}).numStates
-          %      str=[k{i},num2str(j)];
-           %     obj.nodeNames = [obj.nodeNames,str];
-            %end
-        %end
-   % end
+    function removeState(obj,stateName)
+        idx = find(cellfun(@(x) ~isempty(strfind(x,stateName)),obj.nodeNames));
+        obj.distMat(idx,:) = [];
+        obj.distMat(:,idx) = [];
+        obj.adjMat(idx,:) = [];
+        obj.adjMat(:,idx) = [];
+        obj.nodeNames(idx) = [];
+        remove(obj.states,stateName);
+        %obj.constructNNgraph(2);
+    end
     
-  %  function state=node2state(obj,nodeName)
-   %     tokens = regexp(nodeName,{'[a-zA-Z]+','\d+'},'match');
-   %     state = obj.states(tokens{1}{1}).getState(str2double(tokens{2}{1}));
-  %  end
+    function renameState(obj, originName, newName)
+        idx = find(cellfun(@(x) ~isempty(strfind(x,originName)),obj.nodeNames));
+        obj.nodeNames{idx} = newName;
+        state = obj.states(originName);
+        remove(obj.states,originName);
+        obj.states(newName) = state;
+    end
     
     function computeMutualDist(obj)
         obj.distMat = zeros(length(obj.nodeNames));
@@ -65,7 +68,7 @@ methods
         end
     end
     
-    function g = constructNNgraph(obj,nNeighbor)
+    function constructNNgraph(obj,nNeighbor)
         obj.adjMat = zeros(size(obj.distMat));
         obj.nearestNeighbor = zeros(length(obj.nodeNames),nNeighbor);
         
@@ -78,6 +81,13 @@ methods
             for j=1:size(obj.nearestNeighbor,2)
                 obj.adjMat(i,obj.nearestNeighbor(i,j))=obj.distMat(i,obj.nearestNeighbor(i,j));
             end
+        end
+
+    end
+    
+    function g = showNNgraph(obj,nNeighbor)
+        if nNeighbor ~= size(obj.nearestNeighbor,2)
+            obj.constructNNgraph(nNeighbor);
         end
         g=biograph(obj.adjMat,obj.nodeNames);
         view(g);

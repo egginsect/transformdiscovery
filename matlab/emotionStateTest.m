@@ -14,7 +14,15 @@ end
 %%
 sn.computeMutualDist()
 %%
-g=sn.constructNNgraph(6);
+for i = 1:length(emotions)
+    if i~=1
+        sn.removeState([emotions{i},num2str(1)]);
+    end
+end
+%%
+sn.renameState('anger1','neutral')
+%%
+g=sn.showNNgraph(3);
 %g=sn.constructRelationGraph();
 %%
 %happyStates = StateSeq('happy',happy_images,happy_labels,5,10);
