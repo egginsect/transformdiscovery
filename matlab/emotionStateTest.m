@@ -12,9 +12,6 @@ for i = 1:length(emotions)
     eval(['clear ', emotions{i}, '_labels']);
 end
 %%
-sn.genNodes4graph()
-%s=sn.node2state('happy1')
-%%
 sn.computeMutualDist()
 %%
 g=sn.constructNNgraph(6);

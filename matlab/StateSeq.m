@@ -2,7 +2,7 @@ classdef StateSeq < handle
 
 properties 
     states;
-    stateName;
+    stateType;
     numStates;
 end
 
@@ -13,8 +13,8 @@ methods
 %       idx indicating which sequence an image belongs to
 %numStates: specifies how many states to be generate from these image
 %subspaceDimension: indicating the dimension of subspace representing each state
-    function stateSeqObj = StateSeq(stateName, images, idx, numStates, subspaceDimension)
-        stateSeqObj.stateName = stateName;
+    function stateSeqObj = StateSeq(stateType, images, idx, numStates, subspaceDimension)
+        stateSeqObj.stateType = stateType;
         stateSeqObj.states = cell(1,numStates);
         stateSeqObj.numStates = numStates;
         sampledIdx = stateSeqObj.sampleImageSeq(idx, numStates, subspaceDimension+1);
@@ -22,7 +22,7 @@ methods
         for i=1:numStates
             %[num2str(i),' th state']
             %sampledIdx(:,i)
-            stateSeqObj.states{i} = State(images(sampledIdx(:,i)), stateName, i, subspaceDimension);
+            stateSeqObj.states{i} = State(images(sampledIdx(:,i)), [stateType,num2str(i)], i, subspaceDimension);
         end
     end
     
@@ -38,7 +38,7 @@ methods
     % Return ith-state
     function state = getState(obj,i)
         if(~any(i==1:obj.numStates))
-            error(['Invalid State Number for State ',obj.stateName]);
+            error(['Invalid State Number for State ',obj.stateType]);
         else
             state = obj.states{i};
         end
