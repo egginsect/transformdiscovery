@@ -7,7 +7,7 @@ emotions = {'anger','contempt','disgust','fear','happy','sadness','surprise'}
 sn = StateNet();
 for i = 1:length(emotions)
     load(emotions{i})
-    eval(['sn.createNewStateSeq(''', emotions{i}, ''',', emotions{i},'_images,',emotions{i},'_labels, 3, 10);']);
+    eval(['sn.addStateSeq(''', emotions{i}, ''',', emotions{i},'_images,',emotions{i},'_labels, 3, 10);']);
     eval(['clear ', emotions{i}, '_images']);
     eval(['clear ', emotions{i}, '_labels']);
 end

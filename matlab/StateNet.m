@@ -17,7 +17,7 @@ methods
         obj.stateSeqs(stateSeq.stateName) = stateSeq;
     end
     
-    function createNewStateSeq(obj, stateName, images, idx, numStates, subspaceDimension)
+    function addStateSeq(obj, stateName, images, idx, numStates, subspaceDimension)
         if(isKey(obj.stateSeqs,stateName))
             error(['The states ', stateName, 'already exists']);
         end
