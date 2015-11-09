@@ -2,23 +2,31 @@ classdef State < handle
     
 properties
     stateName;
-    stateLevel;
     images;
     imgVec;
     subspace;
 end
 
 methods    
-    function stateObj = State(images, stateName, stateLevel, subspaceDimension)
-        stateObj.stateName = stateName;
-        stateObj.stateLevel = stateLevel;
-        stateObj.images = images;
-        [stateObj.subspace, stateObj.imgVec] = stateObj.generateSubspace(stateObj.images,subspaceDimension);
+    function stateObj = State(varargin)
+        if(length(varargin)<4)
+            %State(images, stateName, subspaceDimension)
+            stateObj.images = varargin{1};
+            stateObj.imgVec = State.images2vectors(varargin{1});
+            stateObj.stateName = varargin{2};
+            stateObj.subspace = stateObj.generateSubspace(stateObj.imgVec, varargin{3});
+        else
+            %State(images, imgVec, stateName, subspaceDimension)
+            stateObj.images = varargin{1};
+            stateObj.imgVec = varargin{2};
+            stateObj.stateName = varargin{3};
+            stateObj.subspace = stateObj.generateSubspace(stateObj.imgVec, varargin{4});
+        end
     end
     
     function showImgHorizontal(obj,maxPhoto)
         if maxPhoto>length(obj.images)
-           maxPhoto = length(obj.images)
+           maxPhoto = length(obj.images);
         end
         [colDim, rowDim] = size(obj.images{1});
         alignedImg = zeros(colDim,rowDim*maxPhoto);
@@ -29,6 +37,10 @@ methods
         end
         figure;
         imshow(alignedImg,[]);
+    end
+    
+    function img=getImage(obj,i)
+        img = obj.images{i};
     end
     
     function subspace = getSubspace(obj)
@@ -47,8 +59,7 @@ methods(Static)
         end
     end
     
-    function [P,imgVec]=generateSubspace(images,dimension)
-        imgVec = State.images2vectors(images);
+    function P=generateSubspace(imgVec,dimension)
         P = pca(imgVec');
         %size(P)
         P = P(:,1:dimension);

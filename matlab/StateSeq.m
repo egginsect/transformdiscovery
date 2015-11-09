@@ -22,7 +22,7 @@ methods
         for i=1:numStates
             %[num2str(i),' th state']
             %sampledIdx(:,i)
-            stateSeqObj.states{i} = State(images(sampledIdx(:,i)), [stateType,num2str(i)], i, subspaceDimension);
+            stateSeqObj.states{i} = State(images(sampledIdx(:,i)), [stateType,num2str(i)], subspaceDimension);
         end
     end
     

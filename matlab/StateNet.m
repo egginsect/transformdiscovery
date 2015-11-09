@@ -17,6 +17,12 @@ methods
     function addState(obj, state)
         obj.states(state.stateName) = state;
         obj.nodeNames = [obj.nodeNames, state.stateName];
+        if(length(obj.nodeNames)>1)
+            for i=1:(length(obj.nodeNames)-1)
+                obj.distMat(i,length(obj.nodeNames)) = stateDist(obj.states(obj.nodeNames{i}),obj.states(obj.nodeNames{length(obj.nodeNames)}));
+                obj.distMat(length(obj.nodeNames),i) = obj.distMat(i,length(obj.nodeNames));
+            end
+        end
     end
     
     function addStateSeq(obj, stateName, images, idx, numStates, subspaceDimension)
@@ -40,8 +46,6 @@ methods
         idx = find(cellfun(@(x) ~isempty(strfind(x,stateName)),obj.nodeNames));
         obj.distMat(idx,:) = [];
         obj.distMat(:,idx) = [];
-        obj.adjMat(idx,:) = [];
-        obj.adjMat(:,idx) = [];
         obj.nodeNames(idx) = [];
         remove(obj.states,stateName);
         %obj.constructNNgraph(2);
@@ -85,12 +89,30 @@ methods
 
     end
     
-    function g = showNNgraph(obj,nNeighbor)
-        if nNeighbor ~= size(obj.nearestNeighbor,2)
-            obj.constructNNgraph(nNeighbor);
+    function mergeState(obj, stateNames, mergedName)
+        imgs = cell(0);
+        imgVec = [];
+        numImg = length(obj.states(stateNames{1}).images);
+        for i=1:length(stateNames)
+            imgs = [imgs, obj.states(stateNames{i}).images];
+            imgVec = [imgVec, obj.states(stateNames{i}).subspace];
         end
-        g=biograph(obj.adjMat,obj.nodeNames);
+        p = randperm(length(imgs));
+        imgs = imgs(p(1:numImg));
+        state = State(imgs,imgVec,mergedName, size(obj.states(stateNames{1}).subspace,2));
+        obj.addState(state);
+        for i = 1:length(stateNames)
+            obj.removeState(stateNames{i});
+        end
+    end
+    
+    function g = showNNgraph(obj,nNeighbor)
+        obj.constructNNgraph(nNeighbor);
+        g=biograph(obj.adjMat, obj.nodeNames);
         view(g);
+    end
+    function state = getState(obj,name)
+        state = obj.states(name);
     end
 end
 end
