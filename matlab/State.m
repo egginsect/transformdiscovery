@@ -61,7 +61,7 @@ methods(Static)
     
     function P=generateSubspace(imgVec,dimension)
         P = pca(imgVec');
-        %size(P)
+        size(P)
         P = P(:,1:dimension);
     end
     
