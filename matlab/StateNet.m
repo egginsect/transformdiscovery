@@ -91,15 +91,11 @@ methods
     
     function mergeState(obj, stateNames, mergedName)
         imgs = cell(0);
-        imgVec = [];
-        numImg = length(obj.states(stateNames{1}).images);
+        %meanImg=zeros(size(obj.states(stateNames{1}).meanImg));
         for i=1:length(stateNames)
             imgs = [imgs, obj.states(stateNames{i}).images];
-            imgVec = [imgVec, obj.states(stateNames{i}).subspace];
         end
-        p = randperm(length(imgs));
-        imgs = imgs(p(1:numImg));
-        state = State(imgs,imgVec,mergedName, size(obj.states(stateNames{1}).subspace,2));
+        state = State(imgs, mergedName, size(obj.states(stateNames{1}).subspace,2));
         obj.addState(state);
         for i = 1:length(stateNames)
             obj.removeState(stateNames{i});
