@@ -17,13 +17,19 @@ end
 %%
 sn.mergeState({'anger1','contempt1','disgust1','fear1','happy1','sadness1','surprise1'},'Neutral');
 %%
-g=sn.showNNgraph(2);
+g=sn.showNNgraph(1);
 %%
-for i = 1:length(emotions)
-    if i~=1
-        sn.removeState([emotions{i},num2str(1)]);
-    end
-end
+neutral = sn.getState('Neutral');
+%%
+sn.removeState('Neutral');
+%%
+sn.addState(neutral)
+%%
+% for i = 1:length(emotions)
+%     if i~=1
+%         sn.removeState([emotions{i},num2str(1)]);
+%     end
+% end
 %%
 anger1 = sn.getState('anger1');
 contempt1 = sn.getState('contempt1');
@@ -32,6 +38,17 @@ fear1 = sn.getState('fear1');
 happy1 = sn.getState('happy1');
 sadness1 = sn.getState('sadness1');
 surprise1 = sn.getState('surprise1');
+%%
+anger2 = sn.getState('anger2');
+contempt2 = sn.getState('contempt2');
+disgust2 = sn.getState('disgust2');
+fear2 = sn.getState('fear2');
+happy2 = sn.getState('happy2');
+sadness2 = sn.getState('sadness2');
+surprise2 = sn.getState('surprise2');
+%%
+sn.mergeState({'anger2','contempt2','disgust2','fear2','happy2','sadness2','surprise2'},'tmp');
+sn.removeState('tmp');
 %%
 sn.addState(anger1);
 sn.addState(contempt1);
