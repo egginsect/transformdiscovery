@@ -4,24 +4,17 @@ properties
     stateName;
     images;
     imgVec;
-    subspace;
+    subspaceInfo;
 end
 
 methods    
-    function stateObj = State(varargin)
-        if(length(varargin)<4)
-            %State(images, stateName, subspaceDimension)
-            stateObj.images = varargin{1};
-            stateObj.imgVec = State.images2vectors(varargin{1});
-            stateObj.stateName = varargin{2};
-            stateObj.subspace = stateObj.generateSubspace(stateObj.imgVec, varargin{3});
-        else
-            %State(images, imgVec, stateName, subspaceDimension)
-            stateObj.images = varargin{1};
-            stateObj.imgVec = varargin{2};
-            stateObj.stateName = varargin{3};
-            stateObj.subspace = stateObj.generateSubspace(stateObj.imgVec, varargin{4});
-        end
+    function stateObj = State(images, stateName, subspaceDimension)
+            stateObj.images = images;
+            stateObj.imgVec = State.images2vectors(images);
+            stateObj.stateName = stateName;
+            stateObj.subspaceInfo.nData = length(stateObj.images);
+            stateObj.subspaceInfo.mu = mean(stateObj.imgVec,2);
+            stateObj.subspaceInfo.subspace = stateObj.generateSubspace(stateObj.imgVec, subspaceDimension);
     end
     
     function showImgHorizontal(obj,maxPhoto)
@@ -44,7 +37,11 @@ methods
     end
     
     function subspace = getSubspace(obj)
-        subspace = obj.subspace;
+        subspace = obj.subspaceInfo.subspace;
+    end
+    
+    function similarity=vec2SubspaceSim(obj, vec, distanceMeasure)
+        similarity = distanceMeasure(obj.subspaceInfo, vec);
     end
 end
 methods(Static)  
@@ -64,7 +61,6 @@ methods(Static)
         %size(P)
         P = P(:,1:dimension);
     end
-    
 end
 
 end
