@@ -25,7 +25,7 @@ methods
         end
     end
     
-    function addStateSeq(obj, stateName, images, idx, numStates, subspaceDimension)
+    function sampledIdx=addStateSeq(obj, stateName, images, idx, numStates, subspaceDimension)
         if sum(cellfun(@(x) ~isempty(strfind(x,stateName)),obj.nodeNames))
             error(['The state ', stateName, 'already exists']);
         end
@@ -33,6 +33,7 @@ methods
         for i=1:newSeq.numStates
             obj.addState(newSeq.getState(i));
         end
+        sampledIdx = newSeq.sampledIdx;
     end
     
     function listStates(obj)
@@ -95,7 +96,7 @@ methods
         for i=1:length(stateNames)
             imgs = [imgs, obj.states(stateNames{i}).images];
         end
-        state = State(imgs, mergedName, size(obj.states(stateNames{1}).subspace,2));
+        state = State(imgs, mergedName, size(obj.states(stateNames{1}).getSubspace,2));
         obj.addState(state);
         for i = 1:length(stateNames)
             obj.removeState(stateNames{i});

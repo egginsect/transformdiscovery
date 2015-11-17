@@ -4,6 +4,7 @@ properties
     states;
     stateType;
     numStates;
+    sampledIdx;
 end
 
 methods
@@ -17,12 +18,12 @@ methods
         stateSeqObj.stateType = stateType;
         stateSeqObj.states = cell(1,numStates);
         stateSeqObj.numStates = numStates;
-        sampledIdx = stateSeqObj.sampleImageSeq(idx, numStates, subspaceDimension+1);
+        stateSeqObj.sampledIdx = stateSeqObj.sampleImageSeq(idx, numStates, subspaceDimension+1);
         
         for i=1:numStates
             %[num2str(i),' th state']
             %sampledIdx(:,i)
-            stateSeqObj.states{i} = State(images(sampledIdx(:,i)), [stateType,num2str(i)], subspaceDimension);
+            stateSeqObj.states{i} = State(images(stateSeqObj.sampledIdx(:,i)), [stateType,num2str(i)], subspaceDimension);
         end
     end
     
