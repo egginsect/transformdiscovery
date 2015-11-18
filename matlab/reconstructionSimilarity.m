@@ -1,5 +1,5 @@
 function similarity = reconstructionSimilarity(subspaceInfo,v)
-    S=subspaceInfo.subspace(:,1:3);
+    S=subspaceInfo.subspace;
     v=double(v);
     v=v-subspaceInfo.mu;
     coeff=v'*S;
