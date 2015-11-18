@@ -87,7 +87,14 @@ methods
                 obj.adjMat(i,obj.nearestNeighbor(i,j))=obj.distMat(i,obj.nearestNeighbor(i,j));
             end
         end
-
+    end
+    
+    function showRelationGraph(obj,nEdge)
+        adjMat = obj.distMat;
+        [sorted idx] = sort(adjMat(:));
+        adjMat(idx((nEdge+length(obj.nodeNames)+1):end))=0;
+        g=biograph(adjMat, obj.nodeNames);
+        view(g);
     end
     
     function mergeState(obj, stateNames, mergedName)
@@ -103,6 +110,20 @@ methods
         end
     end
     
+    function nereastStateName=findRelevantState(obj,img)
+        similarity=-Inf;
+        for i=1:length(obj.nodeNames)
+            state = obj.getState(obj.nodeNames{i});
+            sim=state.vec2SubspaceSim(img,@reconstructionSimilarity);
+            if(sim>similarity)
+                %&& ~strcmp(obj.nodeNames{i},'Neutral')
+               nereastStateName =  obj.nodeNames{i};
+               similarity=sim;
+            end
+        end
+        %disp(['The nereast state is ',nereastStateName])
+    end
+    
     function g = showNNgraph(obj,nNeighbor)
         obj.constructNNgraph(nNeighbor);
         g=biograph(obj.adjMat, obj.nodeNames);
@@ -111,5 +132,7 @@ methods
     function state = getState(obj,name)
         state = obj.states(name);
     end
+    
+    
 end
 end
