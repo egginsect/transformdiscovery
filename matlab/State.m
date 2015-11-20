@@ -43,6 +43,13 @@ methods
     function similarity=vec2SubspaceSim(obj, vec, distanceMeasure)
         similarity = distanceMeasure(obj.subspaceInfo, vec);
     end
+    
+    function imgVec=getImageVectors(obj)
+        imgVec = obj.imgVec;
+    end
+    function numImg=getNumImg(obj)
+        numImg = length(obj.images);
+    end
 end
 methods(Static)  
     function imgVec = images2vectors(images)

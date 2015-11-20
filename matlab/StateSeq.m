@@ -51,6 +51,9 @@ end
 
 methods(Static)
     function sampledIdx = sampleImageSeq(idx, numStates, numPerson)
+    if numPerson > unique(idx)
+        numPerson = length(unique(idx));
+    end
     sampledIdx = zeros(length(unique(idx))*numStates,1);
     objectLabel = unique(idx);
     for i=1:length(objectLabel)
@@ -59,7 +62,7 @@ methods(Static)
         maxIdx = max(croppedIdx);
         sampledIdx((i-1)*numStates+(1:numStates))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numStates-2)/(numStates-1))), maxIdx]';
     end
-    sampledIdx = reshape(sampledIdx,numStates,length(sampledIdx)/numStates)';
+    sampledIdx = reshape(sampledIdx,numStates,numPerson)';
     p = randperm(size(sampledIdx,1));
     sampledIdx = sampledIdx(p(1:numPerson),:);
     end

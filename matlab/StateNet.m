@@ -129,10 +129,18 @@ methods
         g=biograph(obj.adjMat, obj.nodeNames);
         view(g);
     end
+    
     function state = getState(obj,name)
         state = obj.states(name);
     end
     
-    
+    function [imgs, labels]=getTestImage(obj)
+        imgs=[];
+        labels=cell(0);
+        for i=1:length(obj.nodeNames)
+            imgs=[imgs; obj.getState(obj.nodeNames{i}).getImageVectors()'];
+            labels=[labels; repmat(obj.nodeNames(i), obj.getState(obj.nodeNames{i}).getNumImg,1)];
+        end
+    end
 end
 end
