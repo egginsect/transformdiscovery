@@ -1,61 +1,54 @@
 loadEmotionNet
 %%
-testImgs=cell(0);
-testEmotionLabels=[];
 Ntrial=10;
-accuracy = zeros(Ntrial,length(emotions));
-precision = zeros(Ntrial,length(emotions));
-recall = zeros(Ntrial,length(emotions));
-for trial=1:Ntrial
+accuracy = zeros(Ntrial,1);
 testImgs=cell(0);
-testEmotionLabels=[];
+testEmotionLabels = [];
+testStateLabels = cell(0);
 for emotionIdx=1:length(emotions)
-N=50;
-current_emotion = emotions{emotionIdx};
-load([imagepath,current_emotion]);
-idx=partitionImageSeqs(labels,5);
-c=ismember(idx{end},usedImgIdx{emotionIdx});
-idx{end}(find(c))=[];
-Imgs = images(idx{end});
-p = randperm(length(Imgs));
-testImgs = [testImgs,Imgs(p(1:N))];
-testEmotionLabels = [testEmotionLabels; emotionIdx*ones(N,1)];
+N=40;
+load([imagepath,emotions{emotionIdx}]);
+idx=partitionImageSeqs(labels,3);
+%idx=sampleImageSeq(labels, 3, Inf);
+for i=2:size(idx,2)
+    c=ismember(idx{i},usedImgIdx{emotionIdx});
+    idx{i}(find(c))=[];
+    Imgs = images(idx{i});
+    p = randperm(length(Imgs));
+    testImgs = [testImgs,Imgs(p(1:N))];
+    testStateLabels = [testStateLabels; repmat({[emotions{emotionIdx},num2str(i)]},N,1)];
+    testEmotionLabels = [testEmotionLabels; emotionIdx*ones(N,1)];
+end
 clear images
 clear labels
 end
 %
-strs=cell(0);
-for emotionIdx=1:7
-current_emotion = emotions{emotionIdx};
-TpCount=0;
-TnCount=0;
-pCount=0;
-nCount=0;
-negativeIdx = find(testEmotionLabels~=emotionIdx);
-p=randperm(length(negativeIdx));
-NewtestEmotionLabels = [-ones(50,1);ones(50,1)];
-NewtestImgs = testImgs([negativeIdx(p(1:50));find(testEmotionLabels==emotionIdx)]);
-    for j=1:length(NewtestImgs)
-     str = sn.findRelevantState(NewtestImgs{j}(:));
-     strs{j,emotionIdx}=str;
-     if(findstr(str,current_emotion))
-         pCount = pCount+1;
-         if(NewtestEmotionLabels(j)==1)
-             TpCount=TpCount+1;
-         end
-     else
-         nCount=nCount+1;
-         if(NewtestEmotionLabels(j)==-1)
-             TnCount=TnCount+1;
-         end
-     end
-     
+%%
+%strs=cell(0);
+count=0;
+    for j=1:length(testImgs)
+     str = sn.findRelevantState(testImgs{j}(:));
+      if(findstr(str,emotions{testEmotionLabels(j)}))
+        %if(strcmp(str, testEmotionLabels{j}))
+         count=count+1;
+     end   
     end
  %end
-accuracy(trial,emotionIdx) =(TpCount+TnCount)/length(NewtestImgs)*100;
-precision(trial,emotionIdx) = TpCount/pCount*100;
-recall(trial,emotionIdx) = TpCount/N*100;
+accuracy(trial)=count/length(testImgs)*100
 %dlmwrite('accuracy_dist_to_principal_direction.csv',accuracy)
+
+%%
+imgStateHashTable=containers.Map(unique(testEmotionLabels),1:length(unique(testEmotionLabels)));
+%%
+trainImgs(findStrInCell(trainLabels,'neutral'),:) = [];
+%%
+trainLabels(findStrInCell(trainLabels,'neutral')) = [];
+%%
+model = libsvmtrain(cell2mat(values(imgLabelHashTable, trainLabels)), trainImgs, '-c 1 -g 0.07 -t 3');
+%%
+svmImgVec=[];
+for i=1:length(testImgs)
+    svmImgVec(i,:) = double(testImgs{i}(:))';
 end
-end
-dlmwrite('reconstructionSimilarity_no_transient.csv',[mean(accuracy,1);mean(precision,1);mean(recall,1)])
+%%
+[predict_label, accuracy_svm, dec_values] = libsvmpredict(cell2mat(values(imgLabelHashTable,testEmotionLabels)), svmImgVec, model);
