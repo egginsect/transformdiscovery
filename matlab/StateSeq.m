@@ -18,7 +18,7 @@ methods
         stateSeqObj.stateType = stateType;
         stateSeqObj.states = cell(1,numStates);
         stateSeqObj.numStates = numStates;
-        stateSeqObj.sampledIdx = stateSeqObj.sampleImageSeq(idx, numStates, subspaceDimension+1);
+        stateSeqObj.sampledIdx = sampleImageSeq(idx, numStates, subspaceDimension+1);
         
         for i=1:numStates
             %[num2str(i),' th state']
@@ -50,22 +50,25 @@ end
 
 
 methods(Static)
-    function sampledIdx = sampleImageSeq(idx, numStates, numPerson)
-    if numPerson > unique(idx)
-        numPerson = length(unique(idx));
-    end
-    sampledIdx = zeros(length(unique(idx))*numStates,1);
-    objectLabel = unique(idx);
-    for i=1:length(objectLabel)
-        croppedIdx = find(idx==objectLabel(i));
-        minIdx = min(croppedIdx);
-        maxIdx = max(croppedIdx);
-        sampledIdx((i-1)*numStates+(1:numStates))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numStates-2)/(numStates-1))), maxIdx]';
-    end
-    sampledIdx = reshape(sampledIdx,numStates,numPerson)';
-    p = randperm(size(sampledIdx,1));
-    sampledIdx = sampledIdx(p(1:numPerson),:);
-    end
+%     function sampledIdx = sampleImageSeq(idx, numStates, numPerson)
+%     if numPerson > unique(idx)
+%         numPerson = length(unique(idx));
+%     end
+%     sampledIdx = zeros(length(unique(idx))*numStates,1);
+%     objectLabel = unique(idx);
+%     for i=1:length(objectLabel)
+%         croppedIdx = find(idx==objectLabel(i));
+%         minIdx = min(croppedIdx);
+%         maxIdx = max(croppedIdx);
+%         sampledIdx((i-1)*numStates+(1:numStates))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numStates-2)/(numStates-1))), maxIdx]';
+%     end
+%     size(sampledIdx)
+%     numStates
+%     numPerson
+%     sampledIdx = reshape(sampledIdx,numStates,numPerson)';
+%     p = randperm(size(sampledIdx,1));
+%     sampledIdx = sampledIdx(p(1:numPerson),:);
+%     end
     
 end
 

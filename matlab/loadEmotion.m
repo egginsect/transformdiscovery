@@ -9,7 +9,7 @@ usedImgIdx = cell(1,7);
 %cropped_size = [];
 for i = 1:length(emotions)
     load([imagepath,emotions{i}]);
-    usedImgIdx{i}=sn.addStateSeq(emotions{i}, images, labels, 3, 15);
+    usedImgIdx{i}=sn.addStateSeq(emotions{i}, images, labels, 2, 15);
     %eval(['sn.addStateSeq(''', emotions{i}, ''',', emotions{i},'_images,',emotions{i},'_labels, 3, 15);']);
     %for j=1:length(images)
      %   cropped_size = [cropped_size; size(images{i})];
