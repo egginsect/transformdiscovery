@@ -6,6 +6,7 @@ properties
     distMat
     nearestNeighbor
     adjMat
+    dataPreprocessor
 end
 
 methods

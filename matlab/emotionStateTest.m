@@ -45,3 +45,11 @@ sn.renameState('anger1','neutral')
     %happyStates.states{i}.showImgHorizontal(5)
 %end
 %dlmwrite('dist_happy_640_480.csv',d)
+hogFeature=cell(0);
+for i=1:length(sn.nodeNames)
+    for j=1:length(sn.getState(sn.nodeNames{i}).getNumImg())
+    img = sn.getState(sn.nodeNames{i}).getImage(j);
+    hogFeature{i,j} = extractHOGFeatures(img);
+    end
+end
+%%
