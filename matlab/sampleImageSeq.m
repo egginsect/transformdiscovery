@@ -8,7 +8,9 @@
         maxIdx = max(croppedIdx);
         sampledIdx((i-1)*numStates+(1:numStates))=[minIdx, minIdx+round((maxIdx-minIdx)*((1:numStates-2)/(numStates-1))), maxIdx]';
     end
-    size(sampledIdx)
+%     size(sampledIdx)
+%     numStates
+%     length(unique(idx))
     sampledIdx = reshape(sampledIdx,numStates,length(unique(idx)))';
     if exist('numPerson', 'var')
         if(numPerson> unique(idx))

@@ -62,9 +62,9 @@ methods(Static)
             imgVec(:,i) = images{i}(:);
         end
     end
-    
-    function P=generateSubspace(imgVec,dimension)
-        P = pca(imgVec');
+   
+    function P=generateSubspace(vec,dimension)
+        P = pca(vec');
         %size(P)
         P = P(:,1:dimension);
     end

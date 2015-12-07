@@ -6,11 +6,10 @@ properties
     distMat
     nearestNeighbor
     adjMat
-    dataPreprocessor
 end
 
 methods
-    function StateNetObj = StateNet()
+    function StateNetObj = StateNet(preprocessor)
         StateNetObj.states = containers.Map();
         StateNetObj.nodeNames = cell(0);
     end
