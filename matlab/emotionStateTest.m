@@ -53,3 +53,8 @@ for i=1:length(sn.nodeNames)
     end
 end
 %%
+imgToShow=cell(1,15);
+for i=1:length(sn.nodeNames)
+    imgToShow{i}=sn.getState(sn.nodeNames{i}).getImage(1);
+end
+showImageHorizontal(imgToShow,15)

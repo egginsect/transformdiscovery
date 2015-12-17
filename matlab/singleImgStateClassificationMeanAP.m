@@ -1,18 +1,17 @@
 loadEmotion
 %%
 imgStateHashTable=containers.Map(sn.nodeNames,1:length(sn.nodeNames));
-imgEmotionHashTable=containers.Map(sn.nodeNames(1:14),reshape([1:length(emotions);1:length(emotions)],1,2*length(emotions)));
 imgEmotionHashTable=containers.Map(sn.nodeNames(1:7),1:length(emotions));
-imgEmotionHashTable('neutral')=0;
+%imgEmotionHashTable('neutral')=15;
 %%
 testImgs=cell(0);
 testStateLabels = cell(0);
 for emotionIdx=1:length(emotions)
 load([imagepath,emotions{emotionIdx}]);
 idx=partitionImageSeqs(labels,3);
-%idx=sampleImageSeq(labels, 3);
-%idx = mat2cell(idx,size(idx,1),[1,1,1]);
-for j=1:size(idx,2)
+ idx=sampleImageSeq(labels, 3);
+ idx = mat2cell(idx,size(idx,1),[1,1,1]);
+for j=3:size(idx,2)
     
     c=ismember(idx{j},usedImgIdx{emotionIdx});
     idx{j}(find(c))=[];
@@ -28,7 +27,7 @@ clear images
 clear labels
 end
 %%
-currentHashTable = imgStateHashTable;
+currentHashTable = imgEmotionHashTable;
 %%
 [trainImgs, trainLabels]=sn.getTestImage();
 %model = libsvmtrain(cell2mat(values(currentHashTable, trainLabels)), trainImgs, '-c 1 -g 0.07 -t 3');
@@ -38,7 +37,7 @@ currentClasses = unique(cell2mat(values(currentHashTable,keys(currentHashTable))
 precision=zeros(1,length(currentClasses));
 precision_svm=zeros(3,length(currentClasses));
 
-for i=1:length(currentClasses)
+for i=1:15
     count=0;
     
     currentTestIdx = find(cell2mat(values(currentHashTable,testStateLabels))==currentClasses(i));
@@ -59,10 +58,19 @@ precision(i)=count/length(currentTestIdx)*100;
 %trainLabels(findStrInCell(trainLabels,'neutral')) = [];
 svmImgVec=[];
 for j=1:length(currentTestIdx)
-    svmImgVec(j,:) = double(testImgs{currentTestIdx(j)}(:))';
+    %svmImgVec(j,:) = double(testImgs{currentTestIdx(j)}(:))';
 end
-
-%[predict_label, accuracy_svm, dec_values] = libsvmpredict(cell2mat(values(imgEmotionHashTable,testStateLabels)), svmImgVec, model);
 %[predict_label, precision_svm(:,i), dec_values] = libsvmpredict(cell2mat(values(currentHashTable,testStateLabels(currentTestIdx))), svmImgVec, model);
 
 end
+%%
+tt_dat=zeros(length(testImgs),prod(size(testImgs{1})));
+for j=1:length(testStateLabels)
+    tt_dat(j,:) = double(testImgs{j}(:))';
+end
+ttls=cell2mat(values(currentHashTable,testStateLabels));
+save('testSampled3.mat', 'tt_dat', 'ttls');
+%%
+tr_dat=trainImgs;
+trls=cell2mat(values(currentHashTable,trainLabels));
+save('train3.mat', 'tr_dat', 'trls');
