@@ -64,7 +64,9 @@ methods(Static)
     end
    
     function P=generateSubspace(vec,dimension)
-        P = pca(vec');
+        %dimension
+        %P = kernelpca(vec, dimension);
+        P=pca(vec');
         %size(P)
         P = P(:,1:dimension);
     end
