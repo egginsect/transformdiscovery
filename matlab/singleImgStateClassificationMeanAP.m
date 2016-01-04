@@ -8,9 +8,9 @@ testImgs=cell(0);
 testStateLabels = cell(0);
 for emotionIdx=1:length(emotions)
 load([imagepath,emotions{emotionIdx}]);
-%idx=partitionImageSeqs(labels,3);
- idx=sampleImageSeq(labels, 3);
- idx = mat2cell(idx,size(idx,1),[1,1,1]);
+idx=partitionImageSeqs(labels,3);
+%idx=sampleImageSeq(labels, 3);
+%idx = mat2cell(idx,size(idx,1),[1,1,1]);
 for j=1:size(idx,2)
     
     c=ismember(idx{j},usedImgIdx{emotionIdx});

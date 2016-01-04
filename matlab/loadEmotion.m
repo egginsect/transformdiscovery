@@ -1,6 +1,6 @@
 clear all
 close all
-imagepath='/media/hwlee/Data/dataset/CohnKanade+/emotionImgs/';
+imagepath='/media/hwlee/DATA/dataset/CohnKanade+/emotionImgs/';
 %%
 emotions = {'anger','contempt','disgust','fear','happy','sadness','surprise'}
 clc%%
