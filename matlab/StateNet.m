@@ -9,7 +9,7 @@ properties
 end
 
 methods
-    function StateNetObj = StateNet(preprocessor)
+    function StateNetObj = StateNet()
         StateNetObj.states = containers.Map();
         StateNetObj.nodeNames = cell(0);
     end
@@ -25,11 +25,11 @@ methods
         end
     end
     
-    function sampledIdx=addStateSeq(obj, stateName, images, idx, numStates, subspaceDimension)
+    function sampledIdx=addStateSeq(obj, stateName, images, idx, numStates, imgPerState, numPerson, subspaceDimension)
         if sum(cellfun(@(x) ~isempty(strfind(x,stateName)),obj.nodeNames))
             error(['The state ', stateName, 'already exists']);
         end
-        newSeq = StateSeq(stateName, images, idx, numStates, subspaceDimension);
+        newSeq = StateSeq(stateName, images, idx, numStates, imgPerState, subspaceDimension, numPerson);
         for i=1:newSeq.numStates
             obj.addState(newSeq.getState(i));
         end
@@ -109,12 +109,14 @@ methods
             obj.removeState(stateNames{i});
         end
     end
-    
+%     function updateSubspace(obj,@updatingFunction)
+%         
+%     end
     function nereastStateName=findRelevantState(obj,img)
         similarity=-Inf;
         for i=1:length(obj.nodeNames)
             state = obj.getState(obj.nodeNames{i});
-            sim=state.vec2SubspaceSim(img,@reconstructionSimilarity);
+            sim=state.vec2SubspaceSim(img,@ompSimilarity);
             if(sim>similarity)
                 %&& ~strcmp(obj.nodeNames{i},'Neutral')
                nereastStateName =  obj.nodeNames{i};
@@ -132,6 +134,19 @@ methods
     
     function state = getState(obj,name)
         state = obj.states(name);
+    end
+    
+    function updateSubspace(obj,updatingFunction)
+        stateNames=obj.nodeNames;
+    for i=1:length(stateNames)
+        dataInfo.X{i} = obj.getState(stateNames{i}).getImageVectors()...
+        -obj.getState(stateNames{i}).getMean()*ones(1,size(obj.getState(stateNames{i}).getImageVectors(),2));
+        dataInfo.D{i} = obj.getState(stateNames{i}).getSubspace();
+    end
+       dataInfo = updatingFunction(dataInfo); 
+       for i=1:length(stateNames)
+            obj.getState(stateNames{i}).updateSubspace(dataInfo.D{i});
+       end
     end
     
     function [imgs, labels]=getTestImage(obj)

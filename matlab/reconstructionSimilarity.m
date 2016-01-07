@@ -5,4 +5,5 @@ function similarity = reconstructionSimilarity(subspaceInfo,v)
     coeff=v'*S;
     v_hat=S*coeff';
     similarity = -norm(v-v_hat);
+    %similarity = v'*v_hat/norm(v)/norm(v_hat);
 end

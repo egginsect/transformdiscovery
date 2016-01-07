@@ -14,16 +14,20 @@ methods
 %       idx indicating which sequence an image belongs to
 %numStates: specifies how many states to be generate from these image
 %subspaceDimension: indicating the dimension of subspace representing each state
-    function stateSeqObj = StateSeq(stateType, images, idx, numStates, subspaceDimension)
+    function stateSeqObj = StateSeq(stateType, images, idx, numStates, imgPerState, subspaceDimension, numPerson)
         stateSeqObj.stateType = stateType;
         stateSeqObj.states = cell(1,numStates);
         stateSeqObj.numStates = numStates;
-        stateSeqObj.sampledIdx = sampleImageSeq(idx, numStates, subspaceDimension+1);
+        if(exist('numPerson','var'))
+        stateSeqObj.sampledIdx = sampleImageSeq(idx, numStates, imgPerState, numPerson);
+        else
+        stateSeqObj.sampledIdx = sampleImageSeq(idx, numStates, imgPerState);
+        end
         
         for i=1:numStates
             %[num2str(i),' th state']
             %sampledIdx(:,i)
-            stateSeqObj.states{i} = State(images(stateSeqObj.sampledIdx(:,i)), [stateType,num2str(i)], subspaceDimension);
+            stateSeqObj.states{i} = State(images(stateSeqObj.sampledIdx{i}), [stateType,num2str(i)], subspaceDimension);
         end
     end
     

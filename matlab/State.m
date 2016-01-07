@@ -18,7 +18,7 @@ methods
     end
     
     function showImgHorizontal(obj,maxPhoto)
-        if maxPhoto>length(obj.images)
+        if maxPhoto>lengthsubspaceInfo(obj.images)
            maxPhoto = length(obj.images);
         end
         [colDim, rowDim] = size(obj.images{1});
@@ -44,22 +44,33 @@ methods
         similarity = distanceMeasure(obj.subspaceInfo, vec);
     end
     
+    function mu = getMean(obj)
+        mu = obj.subspaceInfo.mu;
+    end
+    
     function imgVec=getImageVectors(obj)
         imgVec = obj.imgVec;
     end
     function numImg=getNumImg(obj)
         numImg = length(obj.images);
     end
+    
+    function updateSubspace(obj,S)
+        obj.subspaceInfo.subspace = S;
+        disp(['updating subspace of state ',obj.stateName])
+    end
 end
 methods(Static)  
     function imgVec = images2vectors(images)
         %image is a 1-by-n vector
-        imgVec = zeros(prod(size(images{1})),length(images));
-        for i = 1:length(images)
+        shrinkedSize=[25,25];
+        imgVec = zeros(prod(shrinkedSize),length(images));
+        for i = 1:numel(images)
             %[num2str(i),' th image']
             %size(imgVec(:,i))
             %size(images{i}(:))
-            imgVec(:,i) = images{i}(:);
+            tmp = imresize(images{i},shrinkedSize);
+            imgVec(:,i) = tmp(:);
         end
     end
    
