@@ -1,4 +1,10 @@
-    function sampledIdx = sampleImageSeq(idx, numStage, imgPerStage, numInstances)
+    function sampledIdx = sampleImageSeq(idx, numStage, imgPerStage, numInstances, usedImgIdx)
+    if exist('usedImgIdx', 'var')
+        usedPerson=unique(idx(usedImgIdx));
+        for i=1:length(usedPerson)
+            idx(idx==usedPerson(i))=[];
+        end
+    end
     objectLabel = unique(idx);
     sampledIdx = cell(numel(objectLabel),numStage);
     for i=1:length(objectLabel)
@@ -21,7 +27,7 @@
 %     length(unique(idx))
 %     sampledIdx = reshape(sampledIdx,numStage,length(unique(idx)))';
      if exist('numInstances', 'var')
-         if(numInstances> unique(idx))
+         if(numInstances> length(unique(idx)))
          numInstances = length(unique(idx));
          end
          p = randperm(size(sampledIdx,1));
