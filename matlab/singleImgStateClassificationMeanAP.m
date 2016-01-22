@@ -1,82 +1,47 @@
-loadEmotion
 %%
-imgStateHashTable=containers.Map(sn.nodeNames,1:length(sn.nodeNames));
+% tic
+% meanAp=zeros(16);
+% lambda1=1:linspace(1,100,4);
+% lambda2=1:linspace(1,100,4);
+% for i=1:4
+%     for j=1:4
+
+%         sn.updateSubspace(@geodesicFlowConstrainedDictionaryUpdate,lambda1(i),lambda2(j));
+%         testScript
+%         meanAp(i,j) = mean(precision);
+%         save meanAp.mat meanAp
+%     end
+% end
+% toc
+%model = libsvmtrain(cell2mat(values(currentHashTable, trainLabels)), trainImgs, '-c 1 -g 0.07 -t 3');
+%sn.updateSubspace(@geodesicFlowConstrainedDictionaryUpdate,30,50);
+%testScript
+precision4Save=zeros(15,8);
+for testRound=25:25
+    numPerson = testRound;
+    loadEmotion
+%%
+    imgStateHashTable=containers.Map(sn.nodeNames,1:length(sn.nodeNames));
 %imgEmotionHashTable=containers.Map(sn.nodeNames(1:7),1:length(emotions));
 %imgEmotionHashTable('neutral')=15;
-%%
-testImgs=cell(0);
-testStateLabels = cell(0);
-for emotionIdx=1:length(emotions)
-load([imagepath,emotions{emotionIdx}]);
-idx=partitionImageSeqs(labels,3);
-%idx=sampleImageSeq(labels, 3);
-%idx = mat2cell(idx,size(idx,1),[1,1,1]);
-for j=1:size(idx,2)
-    
-    c=ismember(idx{j},usedImgIdx{emotionIdx});
-    idx{j}(find(c))=[];
-    Imgs = images(idx{j});
-    testImgs = [testImgs,Imgs];
-    if(j==1)
-        testStateLabels = [testStateLabels; repmat({'neutral'},length(Imgs),1)];
-    else
-    testStateLabels = [testStateLabels; repmat({[emotions{emotionIdx},num2str(j)]},length(Imgs),1)];
-    end
-end
-clear images
-clear labels
-end
-%%
-currentHashTable = imgStateHashTable;
-%%
-[trainImgs, trainLabels]=sn.getTestImage();
-%model = libsvmtrain(cell2mat(values(currentHashTable, trainLabels)), trainImgs, '-c 1 -g 0.07 -t 3');
-%%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           =                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-currentClasses = unique(cell2mat(values(currentHashTable,keys(currentHashTable))));
-precision_train=zeros(1,length(currentClasses));
-precision=zeros(1,length(currentClasses));
-%precision_svm=zeros(3,length(currentClasses));
-
-for i=1:length(currentClasses)
-    count=0;
-    currentTestIdx = find(cell2mat(values(currentHashTable,trainLabels))==currentClasses(i));
-    for j=1:length(currentTestIdx)
-     str = sn.findRelevantState(trainImgs(currentTestIdx(j),:)');
-      if(currentHashTable(str)==currentHashTable(trainLabels{currentTestIdx(j)}))
-         count=count+1;
-      end   
-    end
-    precision_train(i)=count/length(currentTestIdx)*100;
-    
-    count=0;
-    currentTestIdx = find(cell2mat(values(currentHashTable,testStateLabels))==currentClasses(i));
-    for j=1:length(currentTestIdx)
-     str = sn.findRelevantState(testImgs{currentTestIdx(j)}(:));
-      if(currentHashTable(str)==currentHashTable(testStateLabels{currentTestIdx(j)}))
-         count=count+1;
-      end   
-    end
- %end
- 
-precision(i)=count/length(currentTestIdx)*100;
-%dlmwrite('accuracy_dist_to_principal_direction.csv',accuracy)
-
-
-%trainImgs(findStrInCell(trainLabels,'neutral'),:) = [];
-%trainLabels(findStrInCell(trainLabels,'neutral')) = [];
-svmImgVec=[];
-for j=1:length(currentTestIdx)
-    %svmImgVec(j,:) = double(testImgs{currentTestIdx(j)}(:))';
-end
-%[predict_label, precision_svm(:,i), dec_values] = libsvmpredict(cell2mat(values(currentHashTable,testStateLabels(currentTestIdx))), svmImgVec, model);
-
+    sampleTestIMage
+    currentHashTable = imgStateHashTable;
+    testSVM;
+    precision4Save(testRound-9,1:2)=[mean(precision_svm(1,:)),mean(precision_svm_train(1,:))];
+     testPCA;
+     precision4Save(testRound-9,3:4)=[mean(precision), mean(precision_train)];
+    testDL;
+    precision4Save(testRound-9,5:6)=[mean(precision), mean(precision_train)];
+    testGFDL;
+    precision4Save(testRound-9,7:8)=[mean(precision), mean(precision_train)];
+    dlmwrite('precision4Save.csv',precision4Save);
 end
 %%
 % tt_dat=zeros(length(testImgs),prod(size(testImgs{1})));
-% for j=1:length(testStateLabels)
+% for j=1:length(testLabels)
 %     tt_dat(j,:) = double(testImgs{j}(:))';
 % end
-% ttls=cell2mat(values(currentHashTable,testStateLabels));
+% ttls=cell2mat(values(currentHashTable,testLabels));
 % save('testSampled3.mat', 'tt_dat', 'ttls');
 % %%
 % tr_dat=trainImgs;
