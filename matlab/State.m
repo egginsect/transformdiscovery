@@ -22,7 +22,7 @@ methods
            maxPhoto = length(obj.images);
         end
         [colDim, rowDim] = size(obj.images{1});
-        alignedImg = zeros(colDim,rowDim*maxPhoto);
+        alignedImvecg = zeros(colDim,rowDim*maxPhoto);
         for i=1:maxPhoto
             size(alignedImg(:,(i-1)*rowDim+1:i*rowDim))
             size(obj.images{i})
@@ -59,17 +59,37 @@ methods
         obj.subspaceInfo.subspace = S;
         disp(['updating subspace of state ',obj.stateName])
     end
+    
+    function resetSubspace(obj)
+        obj.subspaceInfo.subspace=obj.generateSubspace(obj.imgVec, size(obj.subspaceInfo.subspace,2));
+    end
+    
+    function updateImgVec(obj, vec)
+        if(prod(size(vec)==size(obj.imgVec)))
+        obj.imgVec = vec;
+        obj.subspaceInfo.mu = mean(obj.imgVec,2);
+        else
+            error('vector dimension mismatch');
+        end
+    end
+    
+    function resetImgVec(obj)
+        obj.imgVec = obj.images2vectors(obj.images);
+        obj.subspaceInfo.mu = mean(obj.imgVec,2);
+    end
 end
 methods(Static)  
     function imgVec = images2vectors(images)
         %image is a 1-by-n vector
-        shrinkedSize=[25,25];
+        shrinkedSize=[50,50];
         imgVec = zeros(prod(shrinkedSize),length(images));
+        %imgVec = zeros(531,length(images));
         for i = 1:numel(images)
             %[num2str(i),' th image']
             %size(imgVec(:,i))
             %size(images{i}(:))
             tmp = imresize(images{i},shrinkedSize);
+            %tmp=extractLBPFeatures(images{i},'CellSize',[80,80]);
             imgVec(:,i) = tmp(:);
         end
     end
