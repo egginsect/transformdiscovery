@@ -4,8 +4,7 @@ function dataInfo = geodesicFlowConstrainedDictionaryUpdate(dataInfo)
     B = cell(1,length(X)-1);
     Q = cell(size(B));
     A = cell(1,length(X));
-    lambda1=dataInfo.lambda1;
-    lambda2=dataInfo.lambda2;
+    lambda=dataInfo.lambda;
     [n,p] = size(D{end}); 
     for iter=1:20
     disp(['iteration ',num2str(iter)]);
@@ -24,27 +23,27 @@ function dataInfo = geodesicFlowConstrainedDictionaryUpdate(dataInfo)
         for l=1:length(B)
             tmp = tmp + Q{l}'*D{l}*D{l}'*Q{l};
         end
-        tmp2=zeros(size(D{1},1));
-        for l=1:length(D)
-            tmp2 = tmp2 + D{l}*D{l}';
-        end
+%         tmp2=zeros(size(D{1},1));
+%         for l=1:length(D)
+%             tmp2 = tmp2 + D{l}*D{l}';
+%         end
     for i=1:p
         disp(['updating column ',num2str(i), ' of initial dictionary']);
-        D_new(:,i) = (norm(A{end}(i,:))^2*eye(n)+lambda1*tmp2-lambda2*tmp)\X{end}*A{end}(i,:)';
+        D_new(:,i) = (norm(A{end}(i,:))^2*eye(n)-lambda*tmp)\X{end}*A{end}(i,:)';
     end
     D_new = normc(D_new);
     D{end}=D_new;
     
     for k=1:length(X)-1
-        tmp=zeros(size(D{1},1));
-        for l=1:length(D)
-            if(l~=k)
-            tmp = tmp + D{l}*D{l}';
-            end
-        end
+%         tmp=zeros(size(D{1},1));
+%         for l=1:length(D)
+%             if(l~=k)
+%             tmp = tmp + D{l}*D{l}';
+%             end
+%         end
         for i=1:p
         disp(['updating column ',num2str(i), ' of dictionary ',num2str(k)]);
-        D_new(:,i) = (norm(A{k}(i,:))^2*eye(n)+lambda1*tmp-lambda2*Q{k}*D{end}*D{end}'*Q{k}')\X{k}*A{k}(i,:)';
+        D_new(:,i) = (norm(A{k}(i,:))^2*eye(n)-lambda*Q{k}*D{end}*D{end}'*Q{k}')\X{k}*A{k}(i,:)';
         end
         D_new = normc(D_new);
         D{k}=D_new;
@@ -53,9 +52,16 @@ function dataInfo = geodesicFlowConstrainedDictionaryUpdate(dataInfo)
     dataInfo.D = D;
 end
 
-function Q=computeOrthogonalCompletion(P)
-    Id = sparse(eye(size(P,1)));
-    J=Id(:,1:size(P,2));
-    Q_t = J/P;
-    Q=Q_t';
+function Q = computeOrthogonalCompletion(P)
+    I_n=eye(size(P,1));
+    J=I_n(:,1:size(P,2));
+    [U,S,V]=svd(P*J');
+    Q=V*U';
 end
+
+% function Q=computeOrthogonalCompletion(P)
+%     In = sparse(eye(size(P,1)));
+%     J=In(:,1:size(P,2));
+%     Q_t = J/P;
+%     Q=Q_t';
+% end
