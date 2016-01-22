@@ -112,11 +112,11 @@ methods
 %     function updateSubspace(obj,@updatingFunction)
 %         
 %     end
-    function nereastStateName=findRelevantState(obj,img)
+    function nereastStateName=findRelevantState(obj,img,reconstructFunction)
         similarity=-Inf;
         for i=1:length(obj.nodeNames)
             state = obj.getState(obj.nodeNames{i});
-            sim=state.vec2SubspaceSim(img,@ompSimilarity);
+            sim=state.vec2SubspaceSim(img,reconstructFunction);
             if(sim>similarity)
                 %&& ~strcmp(obj.nodeNames{i},'Neutral')
                nereastStateName =  obj.nodeNames{i};
@@ -136,8 +136,15 @@ methods
         state = obj.states(name);
     end
     
-    function updateSubspace(obj,updatingFunction)
+    function resetSubspace(obj)
+        for i=1:length(obj.nodeNames)
+            obj.getState(obj.nodeNames{i}).resetSubspace();
+        end
+    end
+    
+    function updateSubspace(obj,updatingFunction,lambda)
         stateNames=obj.nodeNames;
+        dataInfo.lambda=lambda;
     for i=1:length(stateNames)
         dataInfo.X{i} = obj.getState(stateNames{i}).getImageVectors()...
         -obj.getState(stateNames{i}).getMean()*ones(1,size(obj.getState(stateNames{i}).getImageVectors(),2));
@@ -156,6 +163,33 @@ methods
             imgs=[imgs; obj.getState(obj.nodeNames{i}).getImageVectors()'];
             labels=[labels; repmat(obj.nodeNames(i), obj.getState(obj.nodeNames{i}).getNumImg,1)];
         end
+    end
+    
+%     function computeZscore(obj)
+%         [imgs, labels] = obj.getTestImage();
+%         imgs = zscore(imgs);
+%         for i = 1:length(obj.nodeNames)
+%             IndexC = strfind(labels, obj.nodeNames{i});
+%             Index = find(not(cellfun('isempty', IndexC)));
+%             obj.getState(obj.nodeNames{i}).updateImgVec(imgs(Index,:)');
+%         end
+%     end
+%     
+    function normalize(obj)
+        [imgs, labels] = obj.getTestImage();
+        imgs=normalize2Norm(imgs);
+        for i = 1:length(obj.nodeNames)
+            IndexC = strfind(labels, obj.nodeNames{i});
+            Index = find(not(cellfun('isempty', IndexC)));
+            obj.getState(obj.nodeNames{i}).updateImgVec(imgs(Index,:)');
+        end
+    end
+    
+    function resetImageVector(obj)
+       stateNames = obj.nodeNames;
+       for i=1:length(stateNames)
+            obj.getState(stateNames{i}).resetImgVec();
+       end
     end
 end
 end
