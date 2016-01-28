@@ -1,10 +1,10 @@
 sn.resetSubspace();
 sn.updateSubspace(@ksvdDictionaryUpdate,0);
-reconstructFunction = @ompSimilarity;
+%reconstructFunction = @ompSimilarity;
 %reconstructFunction = @reconstructionSimilarity;
+reconstructFunction = @homotopySimilarity;
 %%       
 [trainImgs, trainLabels]=sn.getTestImage();
-trainImgs = zscore(trainImgs);
 currentClasses = unique(cell2mat(values(currentHashTable,keys(currentHashTable))));
 precision_train=zeros(1,length(currentClasses));
 precision=zeros(1,length(currentClasses));

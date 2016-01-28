@@ -6,18 +6,20 @@ precision_svm = zeros(3,length(currentClasses));
 %testImgs_svm = (testImgs_svm-0.5)*2;
 %%
 %data=zscore([trainImgs;testImgs]);
-%trainImgs_svm = zscore(trainImgs); %data(1:size(trainImgs),:);
-%testImgs_svm = zscore(testImgs);%data(size(trainImgs)+1:end,:);
+trainImgs_svm = trainImgs;
+testImgs_svm = testImgs;
 %%
-model = libsvmtrain(cell2mat(values(currentHashTable, trainLabels)), trainImgs, '-g 0.07 -t 0 -c 1');
+model = libsvmtrain(cell2mat(values(currentHashTable, trainLabels)), trainImgs_svm, '-g 0.07 -t 0 -c 1');
 for i=1:length(currentClasses)
     currentTestIdx = find(cell2mat(values(currentHashTable,testLabels))==currentClasses(i));
     [predict_label, precision_svm(:,i), dec_values] = ...
-        libsvmpredict(cell2mat(values(currentHashTable,testLabels(currentTestIdx))), testImgs(currentTestIdx,:), model);
+        libsvmpredict(cell2mat(values(currentHashTable,testLabels(currentTestIdx))), testImgs_svm(currentTestIdx,:), model);
 end
 precision_svm_train=zeros(3,length(currentClasses));
 for i=1:length(currentClasses)
     currentTestIdx = find(cell2mat(values(currentHashTable,trainLabels))==currentClasses(i));
     [predict_label, precision_svm_train(:,i), dec_values] = ...
-        libsvmpredict(cell2mat(values(currentHashTable,trainLabels(currentTestIdx))), trainImgs(currentTestIdx,:), model);
+        libsvmpredict(cell2mat(values(currentHashTable,trainLabels(currentTestIdx))), trainImgs_svm(currentTestIdx,:), model);
 end
+mean(precision_svm(1,:),2)
+mean(precision_svm_train(1,:),2)
