@@ -15,7 +15,13 @@ function dataInfo = geodesicFlowConstrainedDictionaryUpdate(dataInfo)
          Q{i} = O*expm([zeros(p),B{i}';-B{i},zeros(n-p)])*O';
     end  
     for i=1:length(A)
-        A{i} = omp(D{i}'*X{i},D{i}'*D{i},10);
+        disp(['compute sparse coefficient for class ', num2str(i)]);
+        A{i} = zeros(size(D{i},2),size(X{i},2));
+
+        for j=1:size(X{i},2)
+            A{i}(:,j) = SolveHomotopy(D{i}, X{i}(:,j), 'lambda', 1e-3, 'tolerance',...
+    1e-5, 'maxiteration', 100, 'isnonnegative', false, 'groundtruth', normc(ones(size(D{i},2),1)));
+        end
     end
 
     D_new = zeros(size(D{1}));
