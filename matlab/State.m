@@ -81,17 +81,18 @@ end
 methods(Static)  
     function imgVec = images2vectors(images)
         %image is a 1-by-n vector
-        shrinkedSize=[50,50];
+        shrinkedSize=[30,30];
         imgVec = zeros(prod(shrinkedSize),length(images));
-        %imgVec = zeros(531,length(images));
+        %imgVec = zeros(3776,length(images));
         for i = 1:numel(images)
             %[num2str(i),' th image']
             %size(imgVec(:,i))
             %size(images{i}(:))
             tmp = imresize(images{i},shrinkedSize);
-            %tmp=extractLBPFeatures(images{i},'CellSize',[80,80]);
+            %tmp=extractLBPFeatures(images{i},'CellSize',[35,35]);
             imgVec(:,i) = tmp(:);
         end
+        
     end
    
     function P=generateSubspace(vec,dimension)
