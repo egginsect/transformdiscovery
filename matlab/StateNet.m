@@ -109,9 +109,6 @@ methods
             obj.removeState(stateNames{i});
         end
     end
-%     function updateSubspace(obj,@updatingFunction)
-%         
-%     end
     function nereastStateName=findRelevantState(obj,img,reconstructFunction)
         similarity=-Inf;
         for i=1:length(obj.nodeNames)
