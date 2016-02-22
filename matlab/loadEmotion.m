@@ -1,12 +1,12 @@
 imagepath='/media/hwlee/DATA/dataset/CohnKanade+/emotionImgs/';
 %%
-emotions = {'anger','contempt','disgust','fear','happy','sadness','surprise'}
+emotions = {'anger','contempt','disgust','fear','happy','sadness','surprise',}
 sn = StateNet();
 
-usedImgIdx = cell(1,7);
+usedImgIdx = cell(1,length(emotions));
 numStates = 3;
 imgPerState = 3;
-%numPerson = 11;
+numPerson = 40;
 subspaceDimension = 20;
 %cropped_size = [];
 for i = 1:length(emotions)
@@ -22,5 +22,5 @@ for i = 1:length(emotions)
     clear labels;
 end
 clear i
-sn.mergeState({'anger1','contempt1','disgust1','fear1','happy1','sadness1','surprise1'},'neutral');
-sn.normalize();
+sn.mergeState({'anger1','disgust1','contempt1','fear1','happy1','sadness1','surprise1'},'neutral');
+%sn.normalize();

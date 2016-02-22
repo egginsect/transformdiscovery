@@ -17,25 +17,26 @@
 %sn.updateSubspace(@geodesicFlowConstrainedDictionaryUpdate,30,50);
 %testScript
 precision4Save=zeros(15,8);
-for testRound=25:25
-    numPerson = testRound;
-    loadEmotion
 %%
+for testRound=1:5
+    %numPerson = testRound;
+    loadEmotion
     imgStateHashTable=containers.Map(sn.nodeNames,1:length(sn.nodeNames));
-%imgEmotionHashTable=containers.Map(sn.nodeNames(1:7),1:length(emotions));
-%imgEmotionHashTable('neutral')=15;
-    sampleTestIMage
     currentHashTable = imgStateHashTable;
-    testSVM;
-    precision4Save(testRound-9,1:2)=[mean(precision_svm(1,:)),mean(precision_svm_train(1,:))];
+    sampleTestIMage
+    [trainImgs, trainLabels]=sn.getTestImage();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+    currentClasses = unique(cell2mat(values(currentHashTable,keys(currentHashTable))));
+    %%
+     testSVM;
+     precision4Save(testRound,1:2)=[mean(precision_svm(1,:)),mean(precision_svm_train(1,:))];
      testPCA;
-     precision4Save(testRound-9,3:4)=[mean(precision), mean(precision_train)];
-    testDL;
-    precision4Save(testRound-9,5:6)=[mean(precision), mean(precision_train)];
-    testGFDL;
-    precision4Save(testRound-9,7:8)=[mean(precision), mean(precision_train)];
-    dlmwrite('precision4Save.csv',precision4Save);
-end
+     precision4Save(testRound,3:4)=[mean(precision), mean(precision_train)];
+     testDL;
+     precision4Save(testRound,5:6)=[mean(precision), mean(precision_train)];
+     testGFDL;
+     precision4Save(testRound,7:8)=[mean(precision), mean(precision_train)];
+     dlmwrite('precision4Save.csv',precision4Save);
+  end
 %%
 % tt_dat=zeros(length(testImgs),prod(size(testImgs{1})));
 % for j=1:length(testLabels)
