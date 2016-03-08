@@ -41,5 +41,9 @@ class FileLoader(object):
             raise ValueError('Length of label and file mismatch') 
         else:
             self.labels.append(labels)
+
     def removeFile(self,idx):
         del self.filePaths[idx]
+
+    def filterByExt(self,ext):
+        self.filePaths = [path for path in self.filePaths if path.endswith(ext)]
