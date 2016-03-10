@@ -12,7 +12,7 @@ methods
             stateObj.images = images;
             stateObj.imgVec = State.images2vectors(images);
             stateObj.stateName = stateName;
-            stateObj.subspaceInfo.nData = length(stateObj.images);
+            %stateObj.subspaceInfo.nData = length(stateObj.images);
             stateObj.subspaceInfo.mu = mean(stateObj.imgVec,2);
             stateObj.subspaceInfo.subspace = stateObj.generateSubspace(stateObj.imgVec, subspaceDimension);
     end
@@ -80,8 +80,9 @@ methods
 end
 methods(Static)  
     function imgVec = images2vectors(images)
+        if iscell(images)
         %image is a 1-by-n vector
-        shrinkedSize=[30,30];
+        shrinkedSize=[40,40];
         imgVec = zeros(prod(shrinkedSize),length(images));
         %imgVec = zeros(3776,length(images));
         for i = 1:numel(images)
@@ -92,7 +93,9 @@ methods(Static)
             %tmp=extractLBPFeatures(images{i},'CellSize',[35,35]);
             imgVec(:,i) = tmp(:);
         end
-        
+        else
+            imgVec = images';
+        end
     end
    
     function P=generateSubspace(vec,dimension)
