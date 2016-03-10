@@ -8,21 +8,22 @@ function dataInfo = geodesicFlowConstrainedDictionaryUpdate(dataInfo)
     [n,p] = size(D{end}); 
     for iter=1:20
     disp(['iteration ',num2str(iter)]);
-        O = computeOrthogonalCompletion(D{end});
+    O = [D{end},null(D{end}')];
     for i=1:length(B)
-         disp(['compute velocity of geodesic', num2str(i)]);
+         disp(['compute exponential map of geodesic', num2str(i)]);
          B{i}=compute_velocity_grassmann_efficient(D{end},D{i});
          Q{i} = O*expm([zeros(p),B{i}';-B{i},zeros(n-p)])*O';
+         %Q{i} = computeGeodesicRelationMat(D{end},D{i},O);
     end  
     for i=1:length(A)
         disp(['compute sparse coefficient for class ', num2str(i)]);
-        A{i} = omp(D{i}'*X{i},D{i}'*D{i},10);
-%         A{i} = zeros(size(D{i},2),size(X{i},2));
-% 
-%         for j=1:size(X{i},2)
-%             A{i}(:,j) = SolveHomotopy(D{i}, X{i}(:,j), 'lambda', 1e-3, 'tolerance',...
-%     1e-5, 'maxiteration', 1000, 'isnonnegative', false, 'groundtruth', normc(ones(size(D{i},2),1)));
-%         end
+        %A{i} = omp(D{i}'*X{i},D{i}'*D{i},5);
+        A{i} = zeros(size(D{i},2),size(X{i},2));
+
+        for j=1:size(X{i},2)
+            A{i}(:,j) = SolveHomotopy(D{i}, X{i}(:,j), 'lambda', 1e-3, 'tolerance',...
+    1e-5, 'maxiteration', 1000, 'isnonnegative', false, 'groundtruth', normc(ones(size(D{i},2),1)));
+        end
     end
 
     D_new = zeros(size(D{1}));
@@ -59,12 +60,13 @@ function dataInfo = geodesicFlowConstrainedDictionaryUpdate(dataInfo)
     dataInfo.D = D;
 end
 
-function Q = computeOrthogonalCompletion(P)
-    I_n=eye(size(P,1));
-    J=I_n(:,1:size(P,2));
-    [U,S,V]=svd(P*J');
-    Q=V*U';
-end
+
+% function O = computeOrthogonalCompletion(P)
+%     I_n=eye(size(P,1));
+%     J=I_n(:,1:size(P,2));
+%     [U,S,V]=svd(P*J');
+%     O=V*U';
+% endsize(P1,)
 
 % function Q=computeOrthogonalCompletion(P)
 %     In = sparse(eye(size(P,1)));
@@ -72,3 +74,15 @@ end
 %     Q_t = J/P;
 %     Q=Q_t';
 % end
+
+function Q=computeGeodesicRelationMat(P1,P2,O)
+    [n,d] = size(P1);
+    [U1,S1,V1] = svd(P1'*P2);
+    [U2,S2,V2] = svd(-null(P1')'*P2);
+    U=blkdiag(U1,U2);
+    Gamma = diag(diag(S1));
+    Sigma = diag(flipud(diag(S2)));
+    R_tilde = [Gamma,Sigma;-Sigma,Gamma];
+    R = blkdiag(R_tilde,eye(n-2*d));
+    Q = O*U*R*U'*O';
+end
