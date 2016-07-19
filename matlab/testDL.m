@@ -8,18 +8,20 @@ precision_train=zeros(1,length(currentClasses));
 precision=zeros(1,length(currentClasses));
 testImgs_bak=testImgs;
 %testImgs = zscore(testImgs);
+confusionMat = zeros(length(currentClasses)); 
 for i=1:length(currentClasses)
     count=0;
     currentTestIdx = find(cell2mat(values(currentHashTable,testLabels))==currentClasses(i));
     for j=1:length(currentTestIdx)
         disp(['classifying testing image ', num2str(j), ' of state ', num2str(i)]);
      str = sn.findRelevantState(testImgs(currentTestIdx(j),:)',reconstructFunction);
+     confusionMat(i,currentHashTable(str)) = confusionMat(i,currentHashTable(str))+1;
       if(currentHashTable(str)==currentHashTable(testLabels{currentTestIdx(j)}))
          count=count+1;
       end   
     end
     precision(i)=count/numel(currentTestIdx)*100;
-    
+    confusionMat(i,:) = confusionMat(i,:)/numel(currentTestIdx)*100;
     count=0;
     currentTestIdx = find(cell2mat(values(currentHashTable,trainLabels))==currentClasses(i));
     for j=1:length(currentTestIdx)
