@@ -18,7 +18,7 @@
 %testScript
 precision4Save=zeros(15,8);
 %%
-for testRound=1:5
+for testRound=1:1
     %numPerson = testRound;
     loadEmotion
     imgStateHashTable=containers.Map(sn.nodeNames,1:length(sn.nodeNames));
@@ -35,7 +35,7 @@ for testRound=1:5
      precision4Save(testRound,5:6)=[mean(precision), mean(precision_train)];
      testGFDL;
      precision4Save(testRound,7:8)=[mean(precision), mean(precision_train)];
-     dlmwrite('precision4Save.csv',precision4Save);
+     %dlmwrite('precision4Save.csv',precision4Save);
   end
 %%
 % tt_dat=zeros(length(testImgs),prod(size(testImgs{1})));

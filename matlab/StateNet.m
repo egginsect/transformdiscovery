@@ -140,16 +140,20 @@ methods
     end
     
     function updateSubspace(obj,updatingFunction,lambda)
+        %obj.uniformMean();
         stateNames=obj.nodeNames;
         dataInfo.lambda=lambda;
     for i=1:length(stateNames)
         dataInfo.X{i} = obj.getState(stateNames{i}).getImageVectors()...
-        -obj.getState(stateNames{i}).getMean()*ones(1,size(obj.getState(stateNames{i}).getImageVectors(),2));
+            -obj.getState(stateNames{i}).getMean()*ones(1,size(obj.getState(stateNames{i}).getImageVectors(),2));
         dataInfo.D{i} = obj.getState(stateNames{i}).getSubspace();
     end
        dataInfo = updatingFunction(dataInfo); 
        for i=1:length(stateNames)
             obj.getState(stateNames{i}).updateSubspace(dataInfo.D{i});
+       end
+       if(isfield( dataInfo, 'J'))
+           disp(dataInfo.J);
        end
     end
     
@@ -188,5 +192,29 @@ methods
             obj.getState(stateNames{i}).resetImgVec();
        end
     end
+    function uniformMean(obj)
+        stateNames=obj.nodeNames;
+        totalMean = zeros(size(obj.getState(stateNames{1}).getMean()));
+        count=0;
+        for i=1:length(stateNames)
+            totalMean = totalMean + obj.getState(stateNames{1}).getMean()*size(obj.getState(stateNames{i}).getImageVectors(),2);
+            count = count+size(obj.getState(stateNames{i}).getImageVectors(),2);
+        end
+        totalMean = totalMean/count;
+      for i=1:length(stateNames)
+          obj.getState(stateNames{i}).setMean(totalMean);
+      end
+    end
+
+     function A=sparseCodingWithDictionary(obj, Data4encode,label)
+        A = zeros(length(label),20);
+        for i=1:length(label)
+            S = obj.getState(label{i}).getSubspace();
+            size(S)
+            v = Data4encode(i,:)';
+            size(v)
+            A(i,:)= omp(S'*v, S'*S, 10);
+        end
+     end
 end
 end

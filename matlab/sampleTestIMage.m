@@ -3,6 +3,8 @@ testLabels = cell(0);
 for emotionIdx=1:length(emotions)
 load([imagepath,emotions{emotionIdx}]);
 %idx=partitionImageSeqs(labels,3);
+%idx=sampleImageSeq(labels, 3, 4, Inf);
+%idx=sampleImageSeq(labels, 3, 4, Inf,usedImgIdx{emotionIdx});
 idx=sampleImageSeq(labels, 3, 4, Inf);
 %idx=cell(1,size(idxtmp,2));
 %  for i=1:size(idxtmp,2)

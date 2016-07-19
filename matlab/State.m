@@ -60,6 +60,10 @@ methods
         disp(['updating subspace of state ',obj.stateName])
     end
     
+    function setMean(obj,mu)
+        obj.subspaceInfo.mu = mu;
+    end
+    
     function resetSubspace(obj)
         obj.subspaceInfo.subspace=obj.generateSubspace(obj.imgVec, size(obj.subspaceInfo.subspace,2));
     end
@@ -82,7 +86,7 @@ methods(Static)
     function imgVec = images2vectors(images)
         if iscell(images)
         %image is a 1-by-n vector
-        shrinkedSize=[40,40];
+        shrinkedSize=[30,30];
         imgVec = zeros(prod(shrinkedSize),length(images));
         %imgVec = zeros(3776,length(images));
         for i = 1:numel(images)

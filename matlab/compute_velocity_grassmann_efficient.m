@@ -26,7 +26,11 @@ X = temp(1:k,:);
 Y = -temp(k+1:end,:);
 
 [U1,U2,V,T,Sig] = gsvd(X,Y,0); %%% Thin CS decomposition
-
+% size(U1)
+% size(U2)
+% size(V)
+% size(T)
+% size(Sig)
 
 theta = acos(T);
 theta = asin(Sig);
